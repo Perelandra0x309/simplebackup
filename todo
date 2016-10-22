@@ -1,0 +1,8 @@
+-Create a backup manager (big job - a lot of work): a list view with 
+different tasks (settings), where you can have different backup 
+directories, times a.s.o. The automatic backup could still be done by 
+another scheduler - which is configured by the manager...
+-option for choosing either parrellel or sequential backup processing
+-Rename FilePanel Titles
+-Register SBQueue application signature on initial installation?
+-Use a better date control object for entering dates

@@ -1,0 +1,244 @@
+SimpleBackup v 2.0
+by Brian Hill
+
+What it is-
+
+SimpleBackup provides a graphical interface to run the zip command.  Many of the zip command's options are available for use through this application.  The goal of this application is to make it easy to create and update backups of large amounts of data.  For example, you can create a backup of your home directory and run this application regularly to make sure the backup is up to date.  SimpleBackup also accepts command line options, so it is easily scriptable and can be used with scheduling applications.
+
+
+Brief history-
+
+This application was started in early September 1999 for the purpose of creating a simple interface to the zip command for creating large backups in BeOS.  It was originally intended for only my own personal use, however after adding several features I decided that other people may have some use for this application as well.  I have made many changes since version 1.0 (see Changes section below).  Version 2.0 was updated to run on Haiku.
+
+
+Installation-
+
+If your reading this, then you've already successfully unzipped the SimpleBackup 2.0 installation package.  There are two steps to the install:
+
+-First, move the 'SimpleBackup' folder to /boot/apps (you can use the included link named 'Step 1- Drag the 'SimpleBackup' folder here')
+
+-Second, run the script named 'Step 2- Run this install script'.
+
+SimpleBackup is now ready to run.  The only external file required is the /bin/zip command, which is included with Haiku.  I have also included a sample settings file called "home_backup_settings" which will back up your /boot/home directory recursively except for the Mozilla and Opera cache folders. This file is located in /boot/home/config/settings/SimpleBackup (the default settings folder) but you can move the file anywhere else you want to keep it.
+
+
+How to use this application-
+
+Select a source directory or file by typing the path into the "Source:" text box or by clicking the "Browse..." button to select a file or directory.  Then select "Create New Backup..." to create a new zip file or "Update Existing Backup..." to update a previously created zip file.  Below these buttons are optional settings that can be modified to change the way the backup is created.
+
+
+Command Line Options-
+
+SimpleBackup can also be run from the command line (or from scripts).  The syntax is:
+
+"SimpleBackup [settings_file] [backup_file]"
+
+where the settings_file is a previously saved file containing settings for SimpleBackup, and backup_file is the target file where the backup is saved.
+
+"SimpleBackup&" will simply open SimpleBackup and recall the settings from the last session.
+
+"SimpleBackup settings_file" will run SimpleBackup (if it is not already running) and restore the settings to those saved in settings_file.  If settings_file is just a file name (not a full path), SimpleBackup will look in both /boot/home and /boot/home/config/settings/SimpleBackup for the file.  To restore a file in another directory, specify the entire path.
+
+"SimpleBackup settings_file backup_file" will automatically start zipping files according to the restored settings of settings_file and save the backup into backup_file.  If the backup_file does not exist, a new backup will be created.  If backup_file does exists, that file is updated.
+
+"SimpleBackup -q" or "SimpleBackup --quit" will quit the application.
+
+You can use the command line options to set up automatic backup of data with a script or a task scheduler.  For example, you can put "SimpleBackup home_backup_settings /boot/backups/home$(date +%m%d%y).zip"  into a scheduler to do automatic backups with the settings saved in the file /boot/home/config/settings/SimpleBackup/home_backup_settings and which saves the backup into the backup directory /boot/backups/.  The $(date +%m%d%y) part of the backup file name inserts the current date into the file name.
+If you want SimpleBackup to quit after starting the backup, put the command "SimpleBackup -q" as your last command.  Each time you call SimpleBackup to start saving a backup, that process is started in a completely different thread so you can quit SimpleBackup as soon as it is finished initializing all your backups.
+
+
+Settings-
+
+There are a few optional settings that you can change to alter the creation of the zip file:
+
+
+General Settings-
+
+Update changed files but do not add new files:
+	When updating, only compresses the files which already exist in the backup which have changed.
+
+Update changed files and add new files:
+	When updating, compresses changed files already existing in the backup and also adds new files which do not exist in the backup.
+
+Recurse directories:
+	This option compresses all files located in subdirectories of the source directory.
+
+Save symlinks as a link, not the referenced file:
+	Symlinks are saved as symlink files, instead of traversing to their associated file or folder.
+
+Don't save directory path information:
+	Does not save directory information in the backup, only saves the file names.
+
+Delete files after compressing:
+	Deletes the files that you are compressing after they have been sucessfully compressed.  The backup is checked for integrity after compressing and before any of the files are deleted.  If the integrity check fails, none of the files are deleted.
+
+Don't add files modified before:
+	If files have a modification date before the one specified they will not be added to the backup.  The date in in the form of Month/Day/Year
+
+Don't add files modified after:
+	If files have a modification date after the one specified they will not be added to the backup.
+
+Run zip in new terminal window:
+	If this is checked then a new terminal window will open so that you can view the zip stdout messages.  Leaving this unchecked will run zip in the background.
+
+Automatically close terminal window after job is finished:
+	When this option is selected the terminal window will close after the job is finished.  If not selected, the terminal window will stay open so you can view the zip command output.
+
+
+Compression Settings-
+
+Compression Level:
+	Choose a level of compression.  Level 0 uses no compression and simply archives all files together.  Level 9 compresses everything.  Level 6 is the default.
+
+Do not use compression on files with these extensions:
+	Use the textbox to add file extensions for the types of files you don't want to be compressed (such as .zip or .tgz).  Note that these extensions don't need a * wildcard character at the beginning.  You can add as many extensions as you want to the list.
+
+Use temporary compression directory:
+	Uses the specified temp directory when creating the backup, then copies it to the directory specified by the save panel.  This option is useful when creating backups on slower removable media.
+
+
+Exclude/Include Settings-
+
+Exclude these files:
+	Use the "Add..." and "Remove" buttons to add and remove entries of files that you do not want included in the backup.  If you add a directory, all files and folders in that directory will be excluded.  Use the "Add Custom:" textbox to add wildcard excludes, such as *.zip.
+
+Include only these files:
+	Use the "Add..." and "Remove" buttons to add and remove entries of the files that you want included in the backup.  If you add a directory all files and folders within that directory will be included.  Use the "Add Custom:" textbox to add wildcard includes, such as *.jpg.  If this option is used, these entries are the only ones which will be added to the backup.
+
+
+Utilities-
+
+I added a few functions which I find useful sometimes.
+
+Zip File Integrity Test:
+	Tests a zip file and reports any errors with the file.
+
+Split A Zip File:
+	This function will split zip files into multiple files with each file a maximum size defined in bytes, kilobytes, or megabytes.  If you choose to use zipsplit, each file is a complete zip archive, so the sections don't need to be recombined to extract the files.  Using standard split, the file is split into exactly the amount you specify.  You will need to recombine the split files using the cat command to get the original file back.  You can use decimal numbers for the size, such as 1.5 MegaBytes.
+
+UUencode file:
+	Encodes the specified file into the uue format.
+
+UUdecode file:
+	Decodes a uue file into the original file.
+
+
+Settings Buttons-
+
+Defaults:
+	Returns all settings to the default settings.
+
+Restore Settings...:
+	Restore settings from a previously saved archived settings file.  if you press the "Set As Settings Directory" button in the open file dialog window, the current folder will be set as your default folder to look for settings files.
+
+Save Settings...:
+	Save settings into an archived settings file, which can be restored later.  Useful for saving configurations for specific backups.
+
+About:
+	The About box.
+
+
+Suggestions, bugs, etc-
+
+This is by no means a finshed product.  See the ToDo section of this document for a list of features I hope to add.  If you have any suggestions or bugs to report, please visit this application's webpage on the http://www.haikuware.com website and send me a message.  New versions of this application will appear at www.haikuware.com.
+
+
+Thanks (BeOS versions)-
+
+Special Thanks to Jon Tegen, Helge Phillip, and David Muszynski for their suggestions and comments.  Thanks to Eberhard Hafermalz for testing the redone backup implimentation.  Thanks to Robert Chinn of Be Inc. for his help with modifying FilePanels.
+
+
+To Do List-
+
+Important:
+-Create a backup settings manager
+-Option for choosing either parrellel or sequential backup processing
+-Use a better date control object for entering dates
+
+Minor:
+-Add multiple file select open panels
+
+
+Changes
+
+Version 2.0 (12/01/2009)
+-Now buildling for Haiku!
+-Modified GUI layout code to use new layout builders.  Different font sizes are now rendered better.
+-Changed some checkboxes to radio buttons, where appropriate
+-Fixed broken terminal launching code (Terminal application signature changed in Haiku)
+-Many other small changes to make the interface more usable and consistant
+-Improved the wording in error messages
+
+Version 1.20 (10/15/2000)
+-Created a seperate background app (SBQueue) to handle starting and monitoring backups
+-User can now select any directory as the default settings directory
+
+Version 1.19 (05/13/2000)
+-Changed settings toggle button to a better looking switch
+-Added option to select whether zip is run in new terminal or in the background
+
+Version 1.18 (02/18/2000)
+-Added "Select Current Directory" button to the open filepanel for directories
+
+Version 1.17a (02/09/2000)
+-Fixed small bug which prevented settings folder from being created on first use.
+
+Version 1.17 (01/23/2000)
+-Added choice of using zipsplit or split when splitting files
+-Saving backups should now work with paths cantaining whitespace
+-Removed abitilty to add absolute paths to the no compression list
+-Lots of small internal code improvements
+
+Version 1.16 (01/11/2000)
+-Moved utilities to new "Utilities" tab
+-Lots of dynamic font code added to make interface more consistant with various fonts
+-Date text boxes now only accept numbers and backspace for input, and are limited to 2 characters for month and day and 4 characters for the year
+-Split zip text box now only accepts numbers and decimal place (".")
+-Added option to keep terminal windows open after a job finishes
+-Moved the "Use temp compression directory" option to the "Compression" tab
+-Added function to test zip file integrity
+-Added documentation and an example script to use cron for automatic backups
+
+Version 1.15 (12/19/99)
+-Now Includes and Excludes can't be enabled at the same time (there is no reason to)
+-Split setting into three panels
+-Added setting to delete files after they have been archived
+-Added option to exclude files modified before a specified date
+-Added option to exclude files modified after a specified date
+-Moved compression level selector to new tab and changed it to a slider
+-Added list of files which shouldn't be compressed (either by wildcard extension or absolute  path)
+-Added functions to encode and decode UUE files
+-Added function to split zip files into smaller sections
+-Improved handling of symlinks in lists
+
+Version 1.14 (11/20/99)
+-Fixed bug when using scripts to update previous backups
+-Added /boot/home/Desktop/* exclude to the included sample home settings file
+
+Version 1.13 (11/05/99)
+-Huge improvement on implimentation of the exclude and include lists.
+
+Version 1.12 (11/03/99)
+-PowerPC version
+-Added horizontal scroll bars to the include and exclude lists so long paths can be displayed
+-More dynamic sizing code added
+-New icon!
+
+Version 1.11 (10/11/99)
+-Command line support (see the new Command Line Options section)
+-Now all files within directories in the exclude and include lists are excluded/included
+-Window size and position saved on exit and recalled on restart
+-Settings saved on exit and recalled on startup
+-Current date added to default backup name
+-Fixed bug when restoring settings
+
+Version 1.1 (10/04/99)
+-Added includes option
+-Added custom exclusions
+-Added saving and restoring of settings
+-Settings split into different tabs to reduce screen real-estate
+-Handles different font sizes better
+-Views and window resize dynamically
+
+Version 1.0 (9/21/99)
+-Initial public release

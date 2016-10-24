@@ -6,7 +6,7 @@
 #define NO_BACKUP 0
 
 //Appication
-#define SB_version "2.0"
+#define SB_version "2.0.1"
 #define APPLICATION_SIGNATURE "application/x-vnd.BH-SimpleBackup"
 #define DEFAULT_SETTINGS_DIR "SimpleBackup"
 

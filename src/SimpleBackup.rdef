@@ -4,13 +4,13 @@ resource app_flags B_SINGLE_LAUNCH;
 resource app_version {
 	major  = 2,
 	middle = 0,
-	minor  = 0,
+	minor  = 1,
 
 	variety = B_APPV_FINAL,
 	internal = 0,
 
 	short_info = "SimpleBackup zip interface",
-	long_info = "SimpleBackup 2.0"
+	long_info = "SimpleBackup 2.0.1"
 };
 
 resource large_icon array {

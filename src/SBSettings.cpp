@@ -48,8 +48,8 @@ SBSettings::SBSettings(BPicture *incupic, BPicture *incspic,
 	modAfterDate = new SBDateControl("After");
 #endif
 	BStringView *monthLabel = new BStringView("MonthLabel", "Month");
-	BStringView *dayLabel = new BStringView("DayLabel", "Day");
-	BStringView *yearLabel = new BStringView("YearLabel", "Year");
+	BStringView *dayLabel = new BStringView("DayLabel", " Day");
+	BStringView *yearLabel = new BStringView("YearLabel", " Year");
 //	BStringView *dayLabelDivider = new BStringView("DayLabelDivider", "/");
 //	BStringView *yearLabelDivider = new BStringView("YearLabelDivider", "/");
 
@@ -76,6 +76,21 @@ SBSettings::SBSettings(BPicture *incupic, BPicture *incspic,
 			.Add(exModAfter, 0, 1)
 			.Add(modAfterDate, 1, 1)
 			.Add(BSpaceLayoutItem::CreateGlue(), 2, 0)
+		)*/
+
+	/*	.Add(BGroupLayoutBuilder(B_HORIZONTAL, 0)
+			.Add(exModBefore)
+			.Add(modBeforeDate->monthControl)
+			.Add(modBeforeDate->dayControl)
+			.Add(modBeforeDate->yearControl)
+			.AddGlue()
+		)
+		.Add(BGroupLayoutBuilder(B_HORIZONTAL, 0)
+			.Add(exModAfter)
+			.Add(modAfterDate->monthControl)
+			.Add(modAfterDate->dayControl)
+			.Add(modAfterDate->yearControl)
+			.AddGlue()
 		)*/
 		.Add(BGridLayoutBuilder(gui_control_padding, gui_control_padding)
 			.Add(exModBefore, 0, 0)

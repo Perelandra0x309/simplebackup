@@ -18,7 +18,7 @@ SBDateControl::SBDateControl(char* name, BPicture *incuP, BPicture *incsP,
 	for (i = '0'; i <= '9'; i++) monthControl->TextView()->AllowChar(i);
 	monthControl->TextView()->AllowChar(B_BACKSPACE);
 //	AddChild(monthControl);
-	
+
 //	viewRect.OffsetTo(viewRect.right, viewRect.top);
 //	viewRect.right = viewRect.left + StringWidth("0")*2 + 15;
 	dayControl = new BTextControl(viewRect, "Day", NULL , "01", NULL);
@@ -50,14 +50,16 @@ SBDateControl::SBDateControl(char* name, BPicture *incuP, BPicture *incsP,
 								new BMessage(SB_NOTHING), B_ONE_STATE_BUTTON);
 //	AddChild(decrementPB);
 #endif
-	
+
 	dayLabelDivider = new BStringView("DayLabelDivider", "/");
 	yearLabelDivider = new BStringView("YearLabelDivider", "/");
-	
-	monthControl->SetExplicitMaxSize(BSize(be_plain_font->StringWidth("000"), B_SIZE_UNSET));
-	dayControl->SetExplicitMaxSize(BSize(be_plain_font->StringWidth("000"), B_SIZE_UNSET));
-	yearControl->SetExplicitMaxSize(BSize(be_plain_font->StringWidth("00000"), B_SIZE_UNSET));
-	
+
+	monthControl->SetExplicitMaxSize(BSize(be_plain_font->StringWidth("0001"), B_SIZE_UNSET));
+	monthControl->SetExplicitMinSize(BSize(be_plain_font->StringWidth("0001"), B_SIZE_UNSET));
+	dayControl->SetExplicitMaxSize(BSize(be_plain_font->StringWidth("0001"), B_SIZE_UNSET));
+	dayControl->SetExplicitMinSize(BSize(be_plain_font->StringWidth("0001"), B_SIZE_UNSET));
+	yearControl->SetExplicitMaxSize(BSize(be_plain_font->StringWidth("000001"), B_SIZE_UNSET));
+
 	// Build the layout
 /*	SetLayout(new BGroupLayout(B_HORIZONTAL));
 	AddChild(BGroupLayoutBuilder(B_HORIZONTAL, gui_control_padding)
@@ -71,6 +73,6 @@ SBDateControl::SBDateControl(char* name, BPicture *incuP, BPicture *incsP,
 	);
 	BSize maxSize = PreferredSize();
 	SetExplicitMaxSize(maxSize);*/
-	
+
 //	ResizeTo(Bounds().Width(), monthControl->Frame().Height());
 }

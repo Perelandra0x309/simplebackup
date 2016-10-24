@@ -96,7 +96,7 @@ SBWindow::SBWindow(BRect size)
 //	BPicture *tuPict, *tdPict;
 //	BView *tempView = new BView(viewRect, "temp", B_FOLLOW_ALL, B_WILL_DRAW | B_FRAME_EVENTS);
 //	AddChild(tempView);
-	
+
 	//Create toggle button
 /*	BRect pictRect(0,0,11,19); //toggle setting shown button pictures
 	BBitmap tuBitmap(pictRect, B_COLOR_8_BIT );
@@ -114,6 +114,7 @@ SBWindow::SBWindow(BRect size)
 	RemoveChild(tempView);
 	delete tempView;*/
 #if USE_DATE_CONTROL
+	BRect pictRect;
 	BPicture	*incuPict, *incsPict, *decuPict, *decsPict;
 	BView *temp1View = new BView(viewRect, "temp", B_FOLLOW_NONE, B_WILL_DRAW );
 	AddChild(temp1View);
@@ -141,7 +142,7 @@ SBWindow::SBWindow(BRect size)
 	RemoveChild(temp1View);
 	delete temp1View;
 #endif
-	
+
 	//Create the GUI views
 	Lock();
 	viewRect = Bounds();
@@ -164,8 +165,8 @@ SBWindow::SBWindow(BRect size)
 	BSize minSize = controlsView->PreferredSize();
 	ResizeTo(minSize.width + 2*gui_control_padding, minSize.height);
 	SetSizeLimits(minSize.width + 2*gui_control_padding, B_SIZE_UNLIMITED, minSize.height, B_SIZE_UNLIMITED);
-	
-	
+
+
 	//Create the settings folder if not found
 	BPath settingsPath;
 	find_directory(B_USER_SETTINGS_DIRECTORY, &settingsPath);
@@ -176,7 +177,7 @@ SBWindow::SBWindow(BRect size)
 		if(settingsDir.CreateDirectory(settingsPath.Path(), &settingsDir)!=B_OK)
 		{	(new BAlert("","Error creating settings folder","OK"))->Go(NULL); }
 	}
-	
+
 	//Restore all settings from when app was last closed
 //	profilesDir = settingsDir;
 	settingsPath.Append("settings");
@@ -225,7 +226,7 @@ SBWindow::SBWindow(BRect size)
 	{	settingsShown = true;
 //		toggleSettings();
 	}*/
-	
+
 	//Create open and save file panel objects
 	savePanel = new BFilePanel(B_SAVE_PANEL);//normal save panel
 	openFilePanel = new BFilePanel(B_OPEN_PANEL, NULL, NULL, B_FILE_NODE, false);//normal open panel
@@ -468,8 +469,8 @@ void SBWindow::AboutRequested()
 				"This program is intended for creating "
 				"large backups.  Tell me what you think.\n\n"
 				"Contact information and the latest version\n"
-				"of this application can be found at\n"
-				"http://www.haikuware.com", "OK"))->Go(NULL);
+				"of this application can be found in\n"
+				"HaikuDepot", "OK"))->Go(NULL);
 	return;
 }
 //Things to do when the control objects are clicked
@@ -533,7 +534,7 @@ void SBWindow::MessageReceived(BMessage* msg)
 			modalW->Unlock();
 			poleView->SetActive(true);
 			modalW->Show();
-			
+
 			//get path for zip file target
 			BPath path;
 			switch(msg->what){

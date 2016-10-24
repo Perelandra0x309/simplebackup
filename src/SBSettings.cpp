@@ -224,12 +224,13 @@ SBSettings::SBSettings(BPicture *incupic, BPicture *incspic,
 
 	//TabView4
 	zipTestB = new BButton("Test Zip", "Choose a zip file to test" B_UTF8_ELLIPSIS, new BMessage(TEST_ZIP));
-	zipTestBox = new BBox("Zip Test", B_WILL_DRAW | B_FRAME_EVENTS);
+	zipTestBox = new BBox("Zip Test");
 	zipTestBox->SetLabel("Zip File Integrity Test");
-	zipTestBox->AddChild(BGroupLayoutBuilder(B_HORIZONTAL, gui_control_padding)
+	BGroupLayout *zipTestLayout = BLayoutBuilder::Group<>(B_HORIZONTAL)
 		.Add(zipTestB)
 		.SetInsets(gui_group_inset, gui_group_inset, gui_group_inset, gui_group_inset)
-	);
+	;
+	zipTestBox->AddChild(zipTestLayout->View());
 
 	zipsplitB = new BButton("ZipSplit", "Choose a zip file to split" B_UTF8_ELLIPSIS, new BMessage(ZIP_SPLIT));
 	splitsize = new BTextControl("ZipSplit size", "Split zip file into sections of:", NULL, NULL);
@@ -250,9 +251,9 @@ SBSettings::SBSettings(BPicture *incupic, BPicture *incspic,
 							new BMessage(ZSPLIT_CHANGED)*/);
 	splitRB = new BRadioButton("use split", "Use the \'split\' command", NULL/*,
 							new BMessage(SPLIT_CHANGED)*/);
-	zipsplitBox = new BBox("Zip Split", B_WILL_DRAW | B_FRAME_EVENTS);
+	zipsplitBox = new BBox("Zip Split");
 	zipsplitBox->SetLabel("Split A Zip File");
-	zipsplitBox->AddChild(BGroupLayoutBuilder(B_VERTICAL, gui_control_padding)
+	BGroupLayout *zipSplitLayout = BLayoutBuilder::Group<>(B_VERTICAL)
 		.Add(BGroupLayoutBuilder(B_HORIZONTAL, gui_control_padding)
 			.Add(splitsize)
 			.Add(splitsizeField)
@@ -262,17 +263,19 @@ SBSettings::SBSettings(BPicture *incupic, BPicture *incspic,
 		.Add(splitRB)
 		.Add(zipsplitB)
 		.SetInsets(gui_group_inset, gui_group_inset, gui_group_inset, gui_group_inset)
-	);
+	;
+	zipsplitBox->AddChild(zipSplitLayout->View());
 
 	uuencodeB = new BButton("UUencode", "UUencode File" B_UTF8_ELLIPSIS, new BMessage(UUENCODE_FILE));
 	uudecodeB = new BButton("UUdecode", "UUdecode File" B_UTF8_ELLIPSIS, new BMessage(UUDECODE_FILE));
-	uueBox = new BBox("UUE", B_WILL_DRAW | B_FRAME_EVENTS);
+	uueBox = new BBox("UUE");
 	uueBox->SetLabel("UUE Encoding and Decoding");
-	uueBox->AddChild(BGroupLayoutBuilder(B_HORIZONTAL, gui_control_padding)
+	BGroupLayout *uueLayout = BLayoutBuilder::Group<>(B_HORIZONTAL)
 		.Add(uuencodeB)
 		.Add(uudecodeB)
 		.SetInsets(gui_group_inset, gui_group_inset, gui_group_inset, gui_group_inset)
-	);
+	;
+	uueBox->AddChild(uueLayout->View());
 
 	zipTestBox->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNSET));
 	zipsplitBox->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNSET));
@@ -280,31 +283,21 @@ SBSettings::SBSettings(BPicture *incupic, BPicture *incspic,
 	splitsizeField->SetExplicitMaxSize(BSize(splitsizeField->Frame().Width(), B_SIZE_UNSET));
 	uueBox->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNSET));
 
-	view4->SetLayout(new BGroupLayout(B_HORIZONTAL));
-	view4->AddChild(BGroupLayoutBuilder(B_VERTICAL, gui_control_padding)
+	BGroupLayout *view4Layout = new BGroupLayout(B_VERTICAL);
+	view4->SetLayout(view4Layout);
+	BLayoutBuilder::Group<>(view4Layout)
 		.Add(zipTestBox)
 		.Add(zipsplitBox)
 		.Add(uueBox)
 		.AddGlue()
 		.SetInsets(gui_group_inset, gui_group_inset, gui_group_inset, gui_group_inset)
-	);
+	;
 
-	//Settings buttons
-/*	defaultSB = new BButton(dummyRect, "Default", "Defaults", new BMessage(DEFAULTS));
-	restoreSB = new BButton(dummyRect, "Restore", "Restore Settings", new BMessage(RESTORES));
-	saveSB = new BButton(dummyRect, "Save", "Save Settings", new BMessage(SAVES));
-	aboutB = new BButton(dummyRect, "About", "About", new BMessage(B_ABOUT_REQUESTED));*/
-
-	SetLayout(new BGroupLayout(B_HORIZONTAL));
-	AddChild(BGroupLayoutBuilder(B_VERTICAL, gui_control_padding)
+	BGroupLayout *thisViewLayout = new BGroupLayout(B_HORIZONTAL);
+	SetLayout(thisViewLayout);
+	BLayoutBuilder::Group<>(thisViewLayout)
 		.Add(settingsTabView)
-		/*.Add(BGroupLayoutBuilder(B_HORIZONTAL, gui_control_padding)
-			.Add(defaultSB)
-			.Add(restoreSB)
-			.Add(saveSB)
-			.Add(aboutB)
-		)*/
-	);
+	;
 
 	InitSettings();
 }

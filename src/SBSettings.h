@@ -11,6 +11,7 @@
 #include "utilities.h"
 
 //GUI layout
+#include <LayoutBuilder.h>
 #include <GridLayoutBuilder.h>
 #include <GroupLayout.h>
 #include <GroupLayoutBuilder.h>

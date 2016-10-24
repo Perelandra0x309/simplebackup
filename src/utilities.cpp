@@ -19,17 +19,17 @@ void uuencode(entry_ref srcRef, bool closeT)
 	BPath srcPath(&srcEntry);
 	char *name = new char[B_FILE_NAME_LENGTH];
 	srcEntry.GetName(name);
-	BString uueArg("echo Starting encoding; uuencode ");
-	uueArg += srcPath.Path(); uueArg += " ";
-	uueArg += name; uueArg += " > ";
-	uueArg += srcPath.Path(); uueArg += ".uue";
+	BString uueArg("echo Starting encoding; uuencode \'");
+	uueArg += srcPath.Path(); uueArg += "\' \'";
+	uueArg += name; uueArg += "\' > \'";
+	uueArg += srcPath.Path(); uueArg += ".uue\'";
 	if(!closeT) { uueArg += "; read -p \"Finished\nPress Enter to close terminal\""; }
 	arg_v[arg_c++] = (char*)uueArg.String();
 	char *termSig = "application/x-vnd.Haiku-Terminal";
 	team_id termTeam;
 	status_t result = be_roster->Launch(termSig, arg_c, arg_v, &termTeam);
 	if (result != B_NO_ERROR)
-	{ (new BAlert("", "Error launching terminal", "OK", NULL, NULL,
+	{ (new BAlert("", "Error launching Terminal", "OK", NULL, NULL,
 					B_WIDTH_AS_USUAL, B_STOP_ALERT))->Go(NULL); }
 	delete[] name;
 	return;
@@ -55,16 +55,16 @@ void uudecode(entry_ref srcRef, bool closeT)
 	BPath srcDirPath(&srcDir,NULL);
 	char *name = new char[B_FILE_NAME_LENGTH];
 	srcEntry.GetName(name);
-	BString uueArg("Starting decoding; cd ");
-	uueArg += srcDirPath.Path(); uueArg += "; uudecode ";
+	BString uueArg("echo Starting decoding; cd \'");
+	uueArg += srcDirPath.Path(); uueArg += "\'; uudecode \'";
 	uueArg += name;
-	if(!closeT) { uueArg += "; read -p \"Finished\nPress Enter to close terminal\""; }
+	if(!closeT) { uueArg += "\'; read -p \"Finished\nPress Enter to close terminal\""; }
 	arg_v[arg_c++] = (char*)uueArg.String();
 	char *termSig = "application/x-vnd.Haiku-Terminal";
 	team_id termTeam;
 	status_t result = be_roster->Launch(termSig, arg_c, arg_v, &termTeam);
 	if (result != B_NO_ERROR)
-	{ (new BAlert("", "Error launching terminal", "OK", NULL, NULL,
+	{ (new BAlert("", "Error launching Terminal", "OK", NULL, NULL,
 					B_WIDTH_AS_USUAL, B_STOP_ALERT))->Go(NULL); }
 	delete[] name;
 	return;

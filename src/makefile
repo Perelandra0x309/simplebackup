@@ -8,7 +8,7 @@ RDEFS = SimpleBackup.rdef
 #Additional makerules go here, use '#' to comment out lines
 
 LOCAL_INCLUDE_PATHS = ./BackupQueue
-TARGET_DIR = .
+TARGET_DIR = ..
 
 
 DEVEL_DIRECTORY := \

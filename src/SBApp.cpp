@@ -1,3 +1,7 @@
+/* SBApp.cpp
+ * Copyright 2016 Brian Hill
+ * All rights reserved. Distributed under the terms of the BSD License.
+ */
 #include "SBApp.h"
 
 int main()

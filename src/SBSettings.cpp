@@ -407,12 +407,16 @@ void SBSettings::removeNoCompressItems()
 	return;
 }
 void SBSettings::addExclude(BEntry excEntry)
-{	BPath excPath(&excEntry);
+{
+	BPath excPath(&excEntry);
+	BString pathString(excPath.Path());
+	if(excEntry.IsDirectory())
+		pathString.Append("/*");
 	char* path;
 	int count = excludeList->CountItems();
 	for(int i=0; i<count; i++) //Check for previous entry
 	{	path = (char*)(static_cast<SBListItem*>(excludeList->ItemAt(i)))->Text();
-		if( strcmp(path, excPath.Path()) == 0 )
+		if( strcmp(path, pathString.String()) == 0 )
 		{	BString alertStr("The entry \"");
 			alertStr.Append(path);
 			alertStr.Append("\" is already listed");
@@ -420,6 +424,7 @@ void SBSettings::addExclude(BEntry excEntry)
 			return; }
 	}
 	excludeList->AddItem(new SBListItem(excPath.Path()));
+
 	return;
 }
 void SBSettings::addCustomExclude()
@@ -451,19 +456,23 @@ void SBSettings::removeExcludes()
 	return;
 }
 void SBSettings::addInclude(BEntry incEntry) //Manip Includes
-{	BPath incPath(&incEntry);
+{
+	BPath incPath(&incEntry);
+	BString pathString(incPath.Path());
+	if(incEntry.IsDirectory())
+		pathString.Append("/*");
 	char* path;
 	int count = includeList->CountItems();
 	for(int i=0; i<count; i++) //Check for previous entry
 	{	path = (char*)(static_cast<SBListItem*>(includeList->ItemAt(i)))->Text();
-		if( strcmp(path, incPath.Path()) == 0 )
+		if( strcmp(path, pathString.String()) == 0 )
 		{	BString alertStr("The entry \"");
 			alertStr.Append(path);
 			alertStr.Append("\" is already listed");
 			(new BAlert("", alertStr.String(), "Oops"))->Go(NULL);
 			return; }
 	}
-	includeList->AddItem(new SBListItem(incPath.Path()));
+	includeList->AddItem(new SBListItem(pathString.String()));
 	return;
 }
 void SBSettings::addCustomInclude()

@@ -171,10 +171,10 @@ SBWindow::SBWindow(BRect size)
 	BPath settingsPath;
 	find_directory(B_USER_SETTINGS_DIRECTORY, &settingsPath);
 	settingsPath.Append(DEFAULT_SETTINGS_DIR);
-	if( settingsDir.SetTo(settingsPath.Path()) == B_ENTRY_NOT_FOUND )
+	if( fSettingsDir.SetTo(settingsPath.Path()) == B_ENTRY_NOT_FOUND )
 	{	//(new BAlert("","Settings directory not found, creating directory "
 						//"~/config/settings/SimpleBackup", "OK"))->Go(NULL);
-		if(settingsDir.CreateDirectory(settingsPath.Path(), &settingsDir)!=B_OK)
+		if(fSettingsDir.CreateDirectory(settingsPath.Path(), &fSettingsDir)!=B_OK)
 		{	(new BAlert("","Error creating settings folder","OK"))->Go(NULL); }
 	}
 
@@ -212,9 +212,13 @@ SBWindow::SBWindow(BRect size)
 					ResizeTo(width, height);
 				}
 			}
-			BString profilesStr;
-			if(archive.FindString("profilesDir", &profilesStr) == B_OK)
-			{	profilesDir.SetTo(profilesStr.String()); }
+			if(archive.FindRef("profilesRef", &fProfilesDirRef) != B_OK)
+			{
+				BPath profilesPath;
+				find_directory(B_USER_DIRECTORY, &profilesPath);
+				BEntry profilesEntry(profilesPath.Path());
+				profilesEntry.GetRef(&fProfilesDirRef);
+			}
 //			archive.FindBool("SB:showSettings", &settingsShown);
 //			settingsShown = !settingsShown;
 //			toggleSettings();
@@ -231,20 +235,13 @@ SBWindow::SBWindow(BRect size)
 	savePanel = new BFilePanel(B_SAVE_PANEL);//normal save panel
 	openFilePanel = new BFilePanel(B_OPEN_PANEL, NULL, NULL, B_FILE_NODE, false);//normal open panel
 	openDirPanel = new BFilePanel(B_OPEN_PANEL, NULL, NULL, B_DIRECTORY_NODE, false);//open file panel for folders only
-	openDirPanel->SetButtonLabel(B_DEFAULT_BUTTON, "Select");
+//	openDirPanel->SetButtonLabel(B_DEFAULT_BUTTON, "Select");
 	openFileOrDirPanel = new BFilePanel(B_OPEN_PANEL, NULL, NULL, B_FILE_NODE | B_DIRECTORY_NODE, false);//panel to select a folder or file
-	openFileOrDirPanel->SetButtonLabel(B_DEFAULT_BUTTON, "Select");
-	saveProfilePanel = new BFilePanel(B_SAVE_PANEL);//save a setting profile
-	saveProfilePanel->SetPanelDirectory(&profilesDir);
-	openProfilePanel = new SWDOpenFilePanel(new BMessenger(this), NULL,//open profile
-								B_FILE_NODE | B_DIRECTORY_NODE, false);
-	openProfilePanel->SetPanelDirectory(&profilesDir);
-	openProfilePanel->setHideOnSWD(false);
-	openProfilePanel->setButtonCommand(SET_PROFILE_DIR);
+//	openFileOrDirPanel->SetButtonLabel(B_DEFAULT_BUTTON, "Select");
+	saveProfilePanel = new SettingsFilePanel(B_SAVE_PANEL, new BMessenger(this), &fProfilesDirRef);//save a setting profile
+	saveProfilePanel->SetTarget(this);
+	openProfilePanel = new SettingsFilePanel(B_OPEN_PANEL, new BMessenger(this), &fProfilesDirRef);//open a setting profile
 	openProfilePanel->SetTarget(this);
-	openProfilePanel->setButtonLabel("Set As Settings Directory");
-	openSWDPanel = new SWDOpenFilePanel(new BMessenger(this));
-	openSWDPanel->SetTarget(this);
 	Unlock();
 	Show();
 }
@@ -256,11 +253,10 @@ SBWindow::~SBWindow()
 	archive.AddFloat("SB:windowLeft", Frame().left);
 	archive.AddFloat("SB:windowWidth", Frame().Width());
 	archive.AddFloat("SB:windowHeight", Frame().Height());
-	BPath settingsPath(&profilesDir, NULL);
-	archive.AddString("profilesDir", settingsPath.Path());
+	archive.AddRef("profilesRef", &fProfilesDirRef);
 //	archive.AddBool("SB:showSettings", settingsShown);
 	settingsView->storeSettings(archive);
-	settingsPath.SetTo(&settingsDir, "settings");
+	BPath settingsPath(&fSettingsDir, "settings");
 	BFile saveFile(settingsPath.Path(), B_READ_WRITE | B_CREATE_FILE | B_ERASE_FILE);
 	int datasize = archive.FlattenedSize();
 	char *databuf = new char[datasize];
@@ -279,13 +275,13 @@ SBWindow::~SBWindow()
 	delete openFileOrDirPanel;
 	delete saveProfilePanel;
 	delete openProfilePanel;
-	delete openSWDPanel;
+//	delete openSWDPanel;
 }
 //Open the BFilePanel object specified and configure
 void SBWindow::showFilePanel(BFilePanel* panel, BMessage *msg)
 {	panel->SetMessage(msg);
 	panel->SetTarget(this);
-	if(panel == openSWDPanel) openSWDPanel->setButtonCommand(msg->what);
+//	if(panel == openSWDPanel) openSWDPanel->setButtonCommand(msg->what);
 	panel->Show();
 }
 //Create the backup job and send it to the backup queue
@@ -610,10 +606,9 @@ void SBWindow::MessageReceived(BMessage* msg)
 			settingsView->restoreSettingsRef(msg);
 			break; }
 		case SET_PROFILE_DIR: {
-			entry_ref srcRef;
-			msg->FindRef("refs", &srcRef);
-			profilesDir.SetTo(&srcRef);
-			saveProfilePanel->SetPanelDirectory(&profilesDir);
+			msg->FindRef("refs", &fProfilesDirRef);
+			saveProfilePanel->UpdateSettingsDirectory(&fProfilesDirRef);
+			openProfilePanel->UpdateSettingsDirectory(&fProfilesDirRef);
 			break; }
 /*		case TOGGLE_S: {
 			toggleSettings();

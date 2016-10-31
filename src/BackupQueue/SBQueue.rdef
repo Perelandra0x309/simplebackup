@@ -13,6 +13,6 @@ resource app_version {
 	long_info = "SBQueue 2.0.1"
 };
 
-resource app_signature "application/x-vnd.BH-SBQueue";
+resource app_signature "application/x-vnd.BH-SimpleBackupQueue";
 
 resource file_types message;

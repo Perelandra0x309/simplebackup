@@ -15,12 +15,20 @@ SWDOpenFilePanel::SWDOpenFilePanel(BMessenger* target = NULL,
 {	Window()->Lock();
 	Window()->AddHandler(this);
 	SetButtonLabel(B_DEFAULT_BUTTON, "Select");
-	BView *panelView = Window()->ChildAt(0);
-	BRect viewRect(panelView->FindView("cancel button")->Frame());
-	viewRect.left = 10;  viewRect.right = viewRect.left + be_plain_font->StringWidth("Select Current Directory") + 20;
-	currentDirB = new BButton(viewRect,"select current","Select Current Directory",
-							new BMessage(CURRENT_S), B_FOLLOW_LEFT | B_FOLLOW_BOTTOM);
-	panelView->AddChild(currentDirB);
+	BView *panelView = Window()->KeyMenuBar();
+//	BRect viewRect(panelView->FindView("cancel button")->Frame());
+//	viewRect.left = 10;  viewRect.right = viewRect.left + be_plain_font->StringWidth("Select Current Directory") + 20;
+	currentDirB = new BButton("select current","Select Current Directory",
+							new BMessage(CURRENT_S));
+	BLayoutBuilder::Group<>(panelView, B_HORIZONTAL, 0)
+		//.AddGlue()
+		.Add(currentDirB)
+		//.AddGlue()
+		;
+	BSize viewSize=panelView->MinSize();
+	viewSize.height+=75;
+	panelView->SetExplicitMinSize(viewSize);
+
 	currentDirB->SetTarget(this);
 	Window()->Unlock();
 }

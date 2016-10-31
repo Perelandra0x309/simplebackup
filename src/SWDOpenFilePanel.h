@@ -3,6 +3,7 @@
 
 #include <InterfaceKit.h>
 #include <StorageKit.h>
+#include <LayoutBuilder.h>
 #include "constants.h"
 
 class SWDOpenFilePanel : public BFilePanel, public BHandler

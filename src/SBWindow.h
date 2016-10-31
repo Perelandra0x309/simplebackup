@@ -6,7 +6,7 @@
 #include "constants.h"
 #include "SBControls.h"
 #include "SBSettings.h"
-#include "SWDOpenFilePanel.h"
+#include "SettingsFilePanel.h"
 
 #include "BarberPole.h"
 
@@ -20,9 +20,11 @@ class SBWindow : public BWindow
 private:
 	SBControls		*controlsView;
 	SBSettings		*settingsView;
-	BFilePanel		*savePanel, *openFilePanel, *openDirPanel, *openFileOrDirPanel, *saveProfilePanel;
-	SWDOpenFilePanel *openProfilePanel, *openSWDPanel;
-	BDirectory		settingsDir, profilesDir;
+	BFilePanel		*savePanel, *openFilePanel, *openDirPanel, *openFileOrDirPanel;
+//	SWDOpenFilePanel *openProfilePanel, *openSWDPanel;
+	SettingsFilePanel	*saveProfilePanel, *openProfilePanel;
+	BDirectory		fSettingsDir;//, profilesDir;
+	entry_ref		fProfilesDirRef;
 //	bool			settingsShown;
 //	void			toggleSettings();
 	void			showFilePanel(BFilePanel*,BMessage*);

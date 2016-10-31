@@ -1,6 +1,6 @@
 NAME = SimpleBackup
 TYPE = APP
-SRCS = BarberPole.cpp utilities.cpp SBListItem.cpp SWDOpenFilePanel.cpp SBDateControl.cpp SBSettings.cpp SBControls.cpp SBWindow.cpp SBApp.cpp
+SRCS = BarberPole.cpp utilities.cpp SBListItem.cpp SettingsFilePanel.cpp SBDateControl.cpp SBSettings.cpp SBControls.cpp SBWindow.cpp SBApp.cpp
 LIBS = be tracker
 OPTIMIZE = FULL
 RDEFS = SimpleBackup.rdef

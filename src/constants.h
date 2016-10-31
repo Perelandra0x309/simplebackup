@@ -12,7 +12,8 @@
 
 //Messages
 #define SB_NOTHING		'nada'
-#define CURRENT_S		'curs'
+#define CURRENT_SET		'curs'
+#define GOTO_PROFILE_DIR 'gopd'
 #define SRC_PANEL		'srcp'
 #define CHECK_SRC		'csrc'
 #define SET_SRC			'ssrc'

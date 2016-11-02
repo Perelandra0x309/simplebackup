@@ -71,14 +71,14 @@ private:
 	BButton			*browseTempB, *remNoCompB, *custNoCompB,
 					*newExcludeB, *delExcludeB, *custExcludeB,
 					*newIncludeB, *delIncludeB, *custIncludeB,
-					*uuencodeB, *uudecodeB, *zipTestB, *zipsplitB;
+					*zipTestB, *zipsplitB;//2016UUE *uuencodeB, *uudecodeB,
 	BPopUpMenu		*splitsizeMenu;
 	BMenuField		*splitsizeField;
 	BTabView		*settingsTabView;
 	BTab			*tab1, *tab2, *tab3, *tab4;
 	BView			*view1, *view2, *view3, *view4;
-	BStringView		*uueLabel, *uudLabel, *testZipLabel;
-	BBox			*zipTestBox, *uueBox, *zipsplitBox;
+	BStringView		*testZipLabel;//2016UUE *uueLabel, *uudLabel,
+	BBox			*zipTestBox, *zipsplitBox;//2016UUE *uueBox,
 	void			InitSettings();
 //	void			toggleFreshen() { freshen->SetValue(!freshen->Value()); }
 //	void			toggleUpdate() { update->SetValue(!update->Value()); }

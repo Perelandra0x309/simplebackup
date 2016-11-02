@@ -31,6 +31,7 @@
 #define CHECK_TEMP		'ctmp'
 #define SET_TEMP		'stmp'
 #define COMP_CHANGED	'cmch'
+#define NOCOMP_SELECTION_CHANGED 'ncsc'
 #define REMOVE_NOCOMP	'rmnc'
 #define ADD_CSTMNOCOMP	'ancp'
 #define EXCLUDE_CHANGED	'exch'
@@ -38,20 +39,22 @@
 #define EXCLUDE_REF		'excr'
 #define REMOVE_EXCLUDES	'rmex'
 #define ADD_CSTMEXCLUDE	'aexc'
+#define EXCLUDE_SELECTION_CHANGED 'exsc'
 #define INCLUDE_CHANGED	'inch'
 #define NEW_INCLUDE		'ninc'
 #define INCLUDE_REF		'incr'
 #define REMOVE_INCLUDES	'rmin'
 #define ADD_CSTMINCLUDE	'ainc'
+#define INCLUDE_SELECTION_CHANGED 'insc'
 #define DEFAULTS		'dflt'
 #define RESTORES		'rsts'
 #define RESTORES_REF	'rstr'
 #define SAVES			'savs'
 #define SAVES_REF		'savr'
-#define UUENCODE_FILE	'uuef'
-#define UUENCODE_REF	'uuer'
-#define UUDECODE_FILE	'uudf'
-#define UUDECODE_REF	'uudr'
+//2016UUE #define UUENCODE_FILE	'uuef'
+//2016UUE #define UUENCODE_REF	'uuer'
+//2016UUE #define UUDECODE_FILE	'uudf'
+//2016UUE #define UUDECODE_REF	'uudr'
 #define TEST_ZIP		'tzip'
 #define TEST_ZIP_REF	'tzrf'
 #define ZIP_SPLIT		'zspl'
@@ -60,7 +63,7 @@
 #define ZIP_SPLIT_REF	'zsrf'
 
 //GUI
-const rgb_color gui_background_color = {216,216,216,0};
+//const rgb_color gui_background_color = {216,216,216,0};
 const float gui_control_padding = 3;
 const float gui_control_indent = 25;
 const float gui_group_inset = 5;

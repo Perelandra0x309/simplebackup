@@ -522,7 +522,6 @@ void SBWindow::MessageReceived(BMessage* msg)
 			modalW->Lock();
 			viewRect = modalW->Bounds();
 			BView *mainView = new BView(viewRect, "Main View", B_FOLLOW_ALL, B_WILL_DRAW);
-			mainView->SetViewColor(gui_background_color);
 			viewRect.InsetBy(5, 5);
 			BarberPole *poleView = new BarberPole(viewRect, "Pole", B_FOLLOW_ALL, B_WILL_DRAW, bpdLeftToRight);
 			mainView->AddChild(poleView);
@@ -613,7 +612,7 @@ void SBWindow::MessageReceived(BMessage* msg)
 /*		case TOGGLE_S: {
 			toggleSettings();
 			break; }*/
-		case UUENCODE_FILE: {
+/*2016UUE		case UUENCODE_FILE: {
 			BMessage *uuemsg = new BMessage(UUENCODE_REF);
 			showFilePanel(openFilePanel, uuemsg);
 			delete uuemsg;
@@ -622,7 +621,7 @@ void SBWindow::MessageReceived(BMessage* msg)
 			BMessage *uudmsg = new BMessage(UUDECODE_REF);
 			showFilePanel(openFilePanel, uudmsg);
 			delete uudmsg;
-			break; }
+			break; }*/
 		case TEST_ZIP: {
 			BMessage *testmsg = new BMessage(TEST_ZIP_REF);
 			showFilePanel(openFilePanel, testmsg);

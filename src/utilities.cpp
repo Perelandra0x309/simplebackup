@@ -1,5 +1,5 @@
 #include "utilities.h"
-
+/*2016UUE
 void uuencode(entry_ref srcRef, bool closeT)
 {	BEntry uueEntry("/bin/uuencode");
 	if(!uueEntry.Exists())
@@ -68,7 +68,7 @@ void uudecode(entry_ref srcRef, bool closeT)
 					B_WIDTH_AS_USUAL, B_STOP_ALERT))->Go(NULL); }
 	delete[] name;
 	return;
-}
+}*/
 void testzip(entry_ref srcRef)
 {	BEntry zipEntry("/bin/zip");
 	if(!zipEntry.Exists())

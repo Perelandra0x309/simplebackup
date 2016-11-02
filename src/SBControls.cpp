@@ -2,8 +2,7 @@
 
 SBControls::SBControls(BRect& size, /*BPicture *tupic, BPicture *tdpic,*/ SBSettings *settingsView)
 	:BView(size, "Backup options", B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_FRAME_EVENTS)
-{	SetViewColor(gui_background_color);
-
+{
 	browseSrc = new BButton("Browse", "Browse" B_UTF8_ELLIPSIS, new BMessage(SRC_PANEL));
 	backupSrc = new BTextControl("Backup Source", "Source:", "/boot/home",
 								new BMessage(CHECK_SRC));

@@ -162,8 +162,8 @@ Minor:
 Changes
 
 Version 2.0.1
--Some small GUI changes to fix layouts in Haiku nightly image
--Create package management hpkg installer
+-Some GUI changes to fix layout issues in Haiku nightly image
+-New using package management to create hpgk installer
 
 Version 2.0 (12/01/2009)
 -Now buildling for Haiku!

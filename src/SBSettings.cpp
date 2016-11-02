@@ -5,8 +5,6 @@ SBSettings::SBSettings(BPicture *incupic, BPicture *incspic,
 								BPicture *decupic, BPicture *decspic)
 	:BView("Settings", B_WILL_DRAW | B_FRAME_EVENTS)
 {
-	SetViewColor(gui_background_color);
-	BRect dummyRect(0,0,0,0);
 	view1 = new BView("General", B_WILL_DRAW | B_FRAME_EVENTS);
 	view2 = new BView("Compression", B_WILL_DRAW | B_FRAME_EVENTS);
 	view3 = new BView("Ex/Include", B_WILL_DRAW | B_FRAME_EVENTS);
@@ -134,24 +132,17 @@ SBSettings::SBSettings(BPicture *incupic, BPicture *incspic,
 
 	noCompress = new BCheckBox("No Compress",
 				"Do not use compression on files with these extensions:", NULL);
-
-	noCompressList = new BListView(dummyRect, "No Compress List", B_MULTIPLE_SELECTION_LIST,
-						B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_NAVIGABLE | B_FRAME_EVENTS);
-	noCompressView = new BScrollView("No Compress List View", noCompressList, B_FOLLOW_NONE,
-						B_WILL_DRAW | B_FRAME_EVENTS, false, true, B_FANCY_BORDER);
-	noCompressView->SetViewColor(gui_background_color);
-
+	noCompressList = new BListView("No Compress List", B_MULTIPLE_SELECTION_LIST);
+	noCompressList->SetSelectionMessage(new BMessage(NOCOMP_SELECTION_CHANGED));
+	noCompressView = new BScrollView("No Compress List View", noCompressList, 0, false, true);
 	custNoCompB = new BButton("Custom No Compress", "Add This",
 								new BMessage(ADD_CSTMNOCOMP));
-
 	remNoCompB = new BButton("Remove", "Remove", new BMessage(REMOVE_NOCOMP));
-
+	remNoCompB->SetEnabled(false);
 	custNoCompTC = new BTextControl("Custom No Compress", ":", ".", NULL);
 
 	tempDir = new BCheckBox("TempDir", "Use temporary compression directory:", NULL);
-
 	browseTempB = new BButton("Browse", "Browse" B_UTF8_ELLIPSIS, new BMessage(TEMP_PANEL));
-
 	dirTextView = new BTextControl("Temp Dir", NULL, "/boot", new BMessage(CHECK_TEMP));
 
 	noCompressList->SetExplicitMaxSize(BSize(be_plain_font->StringWidth("0000000000"), B_SIZE_UNSET));
@@ -179,17 +170,16 @@ SBSettings::SBSettings(BPicture *incupic, BPicture *incspic,
 		)
 		.SetInsets(gui_group_inset, gui_group_inset, gui_group_inset, gui_group_inset)
 	);
+	remNoCompB->SetEnabled(false);
 
 	//Tabview3
 	exclude = new BCheckBox("Exclude", "Exclude these files:", new BMessage(EXCLUDE_CHANGED));
 	newExcludeB = new BButton("Add", "Add" B_UTF8_ELLIPSIS, new BMessage(NEW_EXCLUDE));
 	delExcludeB = new BButton("Remove", "Remove", new BMessage(REMOVE_EXCLUDES));
 	custExcludeB = new BButton("Custom Exclude", "Add Custom", new BMessage(ADD_CSTMEXCLUDE));
-	excludeList = new BListView(dummyRect, "Exclude List", B_MULTIPLE_SELECTION_LIST,
-						B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_NAVIGABLE | B_FRAME_EVENTS);
-	excludeView = new BScrollView("Exclude List View", excludeList, B_FOLLOW_NONE,
-						B_WILL_DRAW | B_FRAME_EVENTS, true, true, B_FANCY_BORDER);
-	excludeView->SetViewColor(gui_background_color);
+	excludeList = new BListView("Exclude List", B_MULTIPLE_SELECTION_LIST);
+	excludeList->SetSelectionMessage(new BMessage(EXCLUDE_SELECTION_CHANGED));
+	excludeView = new BScrollView("Exclude List View", excludeList, 0, true, true);
 	custExcludeTC = new BTextControl("Custom Exclude", ":", "*.", NULL);
 	custExcludeTC->SetDivider(be_plain_font->StringWidth(custExcludeTC->Label()) + 4);
 	include = new BCheckBox("Include", "Include only these files:",
@@ -197,11 +187,9 @@ SBSettings::SBSettings(BPicture *incupic, BPicture *incspic,
 	newIncludeB = new BButton("Add", "Add" B_UTF8_ELLIPSIS, new BMessage(NEW_INCLUDE));
 	delIncludeB = new BButton("Remove", "Remove", new BMessage(REMOVE_INCLUDES));
 	custIncludeB = new BButton("Custom Include", "Add Custom", new BMessage(ADD_CSTMINCLUDE));
-	includeList = new BListView(dummyRect, "Include List", B_MULTIPLE_SELECTION_LIST,
-						B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_NAVIGABLE | B_FRAME_EVENTS);
-	includeView = new BScrollView("Include List View", includeList, B_FOLLOW_NONE,
-						B_WILL_DRAW | B_FRAME_EVENTS, true, true, B_FANCY_BORDER);
-	includeView->SetViewColor(gui_background_color);
+	includeList = new BListView("Include List", B_MULTIPLE_SELECTION_LIST);
+	includeList->SetSelectionMessage(new BMessage(INCLUDE_SELECTION_CHANGED));
+	includeView = new BScrollView("Include List View", includeList, 0, true, true);
 	custIncludeTC = new BTextControl("Custom Include", ":", "*.", NULL);
 	custIncludeTC->SetDivider(be_plain_font->StringWidth(custIncludeTC->Label()) + 4);
 
@@ -281,7 +269,7 @@ SBSettings::SBSettings(BPicture *incupic, BPicture *incspic,
 	;
 	zipsplitBox->AddChild(zipSplitLayout->View());
 
-	uuencodeB = new BButton("UUencode", "UUencode File" B_UTF8_ELLIPSIS, new BMessage(UUENCODE_FILE));
+/*2016UUE	uuencodeB = new BButton("UUencode", "UUencode File" B_UTF8_ELLIPSIS, new BMessage(UUENCODE_FILE));
 	uudecodeB = new BButton("UUdecode", "UUdecode File" B_UTF8_ELLIPSIS, new BMessage(UUDECODE_FILE));
 	uueBox = new BBox("UUE");
 	uueBox->SetLabel("UUE Encoding and Decoding");
@@ -290,20 +278,20 @@ SBSettings::SBSettings(BPicture *incupic, BPicture *incspic,
 		.Add(uudecodeB)
 		.SetInsets(gui_group_inset, gui_group_inset, gui_group_inset, gui_group_inset)
 	;
-	uueBox->AddChild(uueLayout->View());
+	uueBox->AddChild(uueLayout->View());*/
 
 	zipTestBox->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNSET));
 	zipsplitBox->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNSET));
 	splitsizeField->ResizeToPreferred();
 	splitsizeField->SetExplicitMaxSize(BSize(splitsizeField->Frame().Width(), B_SIZE_UNSET));
-	uueBox->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNSET));
+//2016UUE	uueBox->SetExplicitMaxSize(BSize(B_SIZE_UNLIMITED, B_SIZE_UNSET));
 
 	BGroupLayout *view4Layout = new BGroupLayout(B_VERTICAL);
 	view4->SetLayout(view4Layout);
 	BLayoutBuilder::Group<>(view4Layout)
 		.Add(zipTestBox)
 		.Add(zipsplitBox)
-		.Add(uueBox)
+//2016UUE		.Add(uueBox)
 		.AddGlue()
 		.SetInsets(gui_group_inset, gui_group_inset, gui_group_inset, gui_group_inset)
 	;
@@ -342,7 +330,9 @@ void SBSettings::InitSettings()
 	setTempDir(false);
 	setTempDir("/boot");
 	setExclude(false);
+	delExcludeB->SetEnabled(false);
 	setInclude(false);
+	delIncludeB->SetEnabled(false);
 	zsplitRB->SetValue(true);
 }
 BString SBSettings::getModDate(SBDateControl* modDate)
@@ -369,7 +359,15 @@ void SBSettings::setCompLabel()
 void SBSettings::setNoCompression(bool a)
 {	noCompress->SetEnabled(a);
 	custNoCompTC->SetEnabled(a);
-	remNoCompB->SetEnabled(a);
+	if(a){
+		int32 index = noCompressList->CurrentSelection();
+		if(index < 0)
+			remNoCompB->SetEnabled(false);
+		else
+			remNoCompB->SetEnabled(true);
+	}
+	else
+		remNoCompB->SetEnabled(false);
 	custNoCompB->SetEnabled(a);
 	int noCompressNumber = noCompressList->CountItems();
 	for(int i=0; i<noCompressNumber; i++)
@@ -766,6 +764,13 @@ void SBSettings::MessageReceived(BMessage *msg)
 			setNoCompression(compValue!=0 && compValue!=9);
 			setCompLabel();
 			break; }
+		case NOCOMP_SELECTION_CHANGED: {
+			int32 index = noCompressList->CurrentSelection();
+			if(index < 0)
+				remNoCompB->SetEnabled(false);
+			else
+				remNoCompB->SetEnabled(true);
+			break; }
 		case REMOVE_NOCOMP:{ removeNoCompressItems(); break; }
 		case ADD_CSTMNOCOMP: { addCustomNoCompress(); break; }
 		case EXCLUDE_REF: {
@@ -776,6 +781,13 @@ void SBSettings::MessageReceived(BMessage *msg)
 			break; }
 		case REMOVE_EXCLUDES: { removeExcludes(); break; }
 		case ADD_CSTMEXCLUDE: { addCustomExclude(); break; }
+		case EXCLUDE_SELECTION_CHANGED: {
+			int32 index = excludeList->CurrentSelection();
+			if(index < 0)
+				delExcludeB->SetEnabled(false);
+			else
+				delExcludeB->SetEnabled(true);
+			break; }
 		case INCLUDE_REF: {
 			entry_ref incRef;
 			msg->FindRef("refs", &incRef);
@@ -784,6 +796,13 @@ void SBSettings::MessageReceived(BMessage *msg)
 			break; }
 		case REMOVE_INCLUDES: { removeIncludes(); break; }
 		case ADD_CSTMINCLUDE: { addCustomInclude(); break; }
+		case INCLUDE_SELECTION_CHANGED: {
+			int32 index = includeList->CurrentSelection();
+			if(index < 0)
+				delIncludeB->SetEnabled(false);
+			else
+				delIncludeB->SetEnabled(true);
+			break; }
 		case SAVES_REF: {
 			entry_ref dirRef;
 			msg->FindRef("directory",&dirRef);
@@ -806,7 +825,7 @@ void SBSettings::MessageReceived(BMessage *msg)
 			}
 			delete[] databuf; break; }
 		case DEFAULTS: { InitSettings(); break; }
-		case UUENCODE_REF: {
+/*2016UUE		case UUENCODE_REF: {
 			entry_ref ref;
 			msg->FindRef("refs",&ref);
 			uuencode(ref, getCloseTermValue());
@@ -815,7 +834,7 @@ void SBSettings::MessageReceived(BMessage *msg)
 			entry_ref ref;
 			msg->FindRef("refs",&ref);
 			uudecode(ref, getCloseTermValue());
-			break; }
+			break; }*/
 		case TEST_ZIP_REF: {
 			entry_ref ref;
 			msg->FindRef("refs",&ref);

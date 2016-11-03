@@ -182,6 +182,7 @@ SBWindow::SBWindow(BRect size)
 //	profilesDir = settingsDir;
 	settingsPath.Append("settings");
 	BEntry archiveEntry(settingsPath.Path());
+	bool foundProfileSetting = false;
 	if(archiveEntry.Exists())
 	{	BFile archiveFile(&archiveEntry, B_READ_ONLY);
 		off_t datasize; archiveFile.GetSize(&datasize);
@@ -212,13 +213,8 @@ SBWindow::SBWindow(BRect size)
 					ResizeTo(width, height);
 				}
 			}
-			if(archive.FindRef("profilesRef", &fProfilesDirRef) != B_OK)
-			{
-				BPath profilesPath;
-				find_directory(B_USER_DIRECTORY, &profilesPath);
-				BEntry profilesEntry(profilesPath.Path());
-				profilesEntry.GetRef(&fProfilesDirRef);
-			}
+			if(archive.FindRef("profilesRef", &fProfilesDirRef) == B_OK)
+				foundProfileSetting = true;
 //			archive.FindBool("SB:showSettings", &settingsShown);
 //			settingsShown = !settingsShown;
 //			toggleSettings();
@@ -230,6 +226,17 @@ SBWindow::SBWindow(BRect size)
 	{	settingsShown = true;
 //		toggleSettings();
 	}*/
+	if(!foundProfileSetting)
+	{
+		BDirectory profilesDir;
+		BPath profilesPath(&fSettingsDir);
+		profilesPath.Append("saved profiles");
+		if( profilesDir.SetTo(profilesPath.Path()) == B_ENTRY_NOT_FOUND )
+			profilesDir.CreateDirectory(profilesPath.Path(), &profilesDir);
+		BEntry profilesEntry;
+		profilesDir.GetEntry(&profilesEntry);
+		profilesEntry.GetRef(&fProfilesDirRef);
+	}
 
 	//Create open and save file panel objects
 	savePanel = new BFilePanel(B_SAVE_PANEL);//normal save panel
@@ -240,8 +247,10 @@ SBWindow::SBWindow(BRect size)
 //	openFileOrDirPanel->SetButtonLabel(B_DEFAULT_BUTTON, "Select");
 	saveProfilePanel = new SettingsFilePanel(B_SAVE_PANEL, new BMessenger(this), &fProfilesDirRef);//save a setting profile
 	saveProfilePanel->SetTarget(this);
+	saveProfilePanel->UpdateSettingsDirectory(&fProfilesDirRef);
 	openProfilePanel = new SettingsFilePanel(B_OPEN_PANEL, new BMessenger(this), &fProfilesDirRef);//open a setting profile
 	openProfilePanel->SetTarget(this);
+	openProfilePanel->UpdateSettingsDirectory(&fProfilesDirRef);
 	Unlock();
 	Show();
 }

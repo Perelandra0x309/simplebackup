@@ -421,7 +421,7 @@ void SBSettings::addExclude(BEntry excEntry)
 			(new BAlert("", alertStr.String(), "Oops"))->Go(NULL);
 			return; }
 	}
-	excludeList->AddItem(new SBListItem(excPath.Path()));
+	excludeList->AddItem(new SBListItem(pathString.String()));
 
 	return;
 }

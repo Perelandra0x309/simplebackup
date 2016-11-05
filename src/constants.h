@@ -49,6 +49,7 @@
 #define DEFAULTS		'dflt'
 #define RESTORES		'rsts'
 #define RESTORES_REF	'rstr'
+#define RESTORES_FILENAME 'rstf'
 #define SAVES			'savs'
 #define SAVES_REF		'savr'
 //2016UUE #define UUENCODE_FILE	'uuef'

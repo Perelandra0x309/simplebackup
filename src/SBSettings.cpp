@@ -614,10 +614,9 @@ void SBSettings::storeSettings(BMessage &archive)
 	}
 	return;
 }
-bool SBSettings::restoreSettingsRef(BMessage *msg){
+bool SBSettings::restoreSettingsRef(entry_ref srcRef)
+{
 	bool success = false;
-	entry_ref srcRef;
-	msg->FindRef("refs", &srcRef);
 	BEntry srcEntry(&srcRef, true);
 	BFile srcFile(&srcEntry, B_READ_ONLY);
 	off_t datasize;

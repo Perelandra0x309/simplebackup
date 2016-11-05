@@ -10,15 +10,13 @@
 #include "SBWindow.h"
 
 class SBApp : public BApplication
-{public:
+{
+public:
 					SBApp();
-					~SBApp();
-	virtual void	ReadyToRun();
 	virtual void	ArgvReceived(int32,char**);
-	void			printhelp();
 private:
-	SBWindow		*aWindow;
-	bool			ready_to_run;
+	SBWindow		*fWindow;
+	void			printhelp();
 };
 
 #endif

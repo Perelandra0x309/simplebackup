@@ -254,6 +254,8 @@ SBWindow::SBWindow(BRect size)
 	Unlock();
 	Show();
 }
+
+
 SBWindow::~SBWindow()
 {
 	//Save settings to be restored when app runs next
@@ -286,21 +288,23 @@ SBWindow::~SBWindow()
 	delete openProfilePanel;
 //	delete openSWDPanel;
 }
+
 //Open the BFilePanel object specified and configure
-void SBWindow::showFilePanel(BFilePanel* panel, BMessage *msg)
+void SBWindow::_showFilePanel(BFilePanel* panel, BMessage *msg)
 {	panel->SetMessage(msg);
 	panel->SetTarget(this);
 //	if(panel == openSWDPanel) openSWDPanel->setButtonCommand(msg->what);
 	panel->Show();
 }
+
 //Create the backup job and send it to the backup queue
-void SBWindow::saveBackup(BPath& filePath, bool newBackup)
+void SBWindow::_saveBackup(BPath& filePath, bool newBackup)
 {	BEntry zipEntry("/bin/zip");
 	if(!zipEntry.Exists())
 	{	(new BAlert("", "Zip command does not exist in /bin", "OK", NULL, NULL,
 					B_WIDTH_AS_USUAL, B_STOP_ALERT))->Go(NULL);
 		return; }
-	char *backupSrc = controlsView->getSrc();
+	const char *backupSrc = controlsView->getSrc();
 	BEntry srcEntry(backupSrc);
 	if(!srcEntry.Exists())
 	{	(new BAlert("", "Invalid source", "OK", NULL, NULL, B_WIDTH_AS_USUAL,
@@ -451,6 +455,7 @@ void SBWindow::saveBackup(BPath& filePath, bool newBackup)
 #endif
 	return;
 }
+
 //Hide or show the settings view
 /*void SBWindow::toggleSettings()
 {	if(settingsShown)
@@ -461,11 +466,13 @@ void SBWindow::saveBackup(BPath& filePath, bool newBackup)
 	controlsView->setToggleB(settingsShown);
 	return;
 }*/
+
 //Quit
 bool SBWindow::QuitRequested()
 {	be_app->PostMessage(B_QUIT_REQUESTED);
 	return(true);
 }
+
 //About
 void SBWindow::AboutRequested()
 {	(new BAlert("About SimpleBackup",
@@ -478,6 +485,7 @@ void SBWindow::AboutRequested()
 				"HaikuDepot", "OK"))->Go(NULL);
 	return;
 }
+
 //Things to do when the control objects are clicked
 void SBWindow::MessageReceived(BMessage* msg)
 {	switch(msg->what)
@@ -494,10 +502,10 @@ void SBWindow::MessageReceived(BMessage* msg)
 			time_t now = time(NULL);
 			struct tm *date;
 			date = localtime(&now);
-			strftime(dateString, 16, "%m%d%y", date);
+			strftime(dateString, 16, "%Y-%m-%d", date);
 			backupName += dateString;
 			backupName += ".zip";
-			showFilePanel(savePanel,newmsg);
+			_showFilePanel(savePanel,newmsg);
 			savePanel->SetSaveText(backupName.String());
 			delete newmsg;
 			break; }
@@ -508,18 +516,28 @@ void SBWindow::MessageReceived(BMessage* msg)
 				return; }
 			BMessage *updtmsg = new BMessage(UPDATE_BACKUP);
 			updtmsg->AddBool("newBackup", false);
-			showFilePanel(openFilePanel,updtmsg);
+			_showFilePanel(openFilePanel,updtmsg);
 			delete updtmsg;
 			break; }
 		case NEW_BACKUP:
 		case UPDATE_BACKUP: {
-			entry_ref dirRef;
-			if(msg->FindRef("settings_ref", &dirRef) == B_OK)
-			{	BMessage setmsg;
-				setmsg.what = RESTORES_REF;
-				setmsg.AddRef("refs",&dirRef);
-				if(!(settingsView->restoreSettingsRef(&setmsg)))
+			entry_ref settingsRef;
+			//Look for a provided file ref
+			if(msg->FindRef("settings_ref", &settingsRef) == B_OK)
+			{
+				if(!(settingsView->restoreSettingsRef(settingsRef)))
 				{	break; }
+			}
+			//Look for a provided file name
+			else
+			{
+				BString filenameString;
+				if(msg->FindString("filename", &filenameString) == B_OK)
+				{
+					bool restoreResult = _RestoreSettingsFromFilename(filenameString.String());
+					if(!restoreResult)
+						break;
+				}
 			}
 			//UpdateIfNeeded();
 			BRect viewRect(0,0,200,25);
@@ -541,6 +559,7 @@ void SBWindow::MessageReceived(BMessage* msg)
 
 			//get path for zip file target
 			BPath path;
+			entry_ref dirRef;
 			switch(msg->what){
 				case NEW_BACKUP: {//get the directory and file name provided by the save file panel
 					msg->FindRef("directory",&dirRef);
@@ -558,7 +577,7 @@ void SBWindow::MessageReceived(BMessage* msg)
 			}
 			bool newB;
 			msg->FindBool("newBackup", &newB);
-			saveBackup(path, newB);
+			_saveBackup(path, newB);
 			//(new BAlert("", "Backup done", "OK", NULL, NULL))->Go();
 			poleView->SetActive(false);
 			modalW->Lock();
@@ -575,7 +594,7 @@ void SBWindow::MessageReceived(BMessage* msg)
 			break; }
 		case SRC_PANEL: {
 			BMessage *srcmsg = new BMessage(SET_SRC);
-			showFilePanel(openFileOrDirPanel,srcmsg);
+			_showFilePanel(openFileOrDirPanel,srcmsg);
 			delete srcmsg;
 			break; }
 		case SET_SRC: {
@@ -583,35 +602,53 @@ void SBWindow::MessageReceived(BMessage* msg)
 			msg->FindRef("refs", &srcRef);
 			BEntry srcEntry(&srcRef, true);
 			BPath path(&srcEntry);
-			controlsView->setSrc((char*)path.Path());
+			controlsView->setSrc(path.Path());
 			break; }
 		case TEMP_PANEL: {
 			BMessage *tmpmsg = new BMessage(SET_TEMP);
-			showFilePanel(openDirPanel,tmpmsg);
+			_showFilePanel(openDirPanel,tmpmsg);
 			delete tmpmsg;
 			break; }
 		case NEW_EXCLUDE: {
 			BMessage *excmsg = new BMessage(EXCLUDE_REF);
-			showFilePanel(openFileOrDirPanel,excmsg);
+			_showFilePanel(openFileOrDirPanel,excmsg);
 			delete excmsg;
 			break; }
 		case NEW_INCLUDE: {
 			BMessage *incmsg = new BMessage(INCLUDE_REF);
-			showFilePanel(openFileOrDirPanel,incmsg);
+			_showFilePanel(openFileOrDirPanel,incmsg);
 			delete incmsg;
 			break; }
 		case SAVES: {
 			BMessage *ssmsg = new BMessage(SAVES_REF);
-			showFilePanel(saveProfilePanel,ssmsg);
+			_showFilePanel(saveProfilePanel,ssmsg);
 			delete ssmsg;
 			break; }
 		case RESTORES: {
 			BMessage *rsmsg = new BMessage(RESTORES_REF);
-			showFilePanel(openProfilePanel,rsmsg);
+			_showFilePanel(openProfilePanel,rsmsg);
 			delete rsmsg;
 			break; }
 		case RESTORES_REF: {
-			settingsView->restoreSettingsRef(msg);
+			entry_ref srcRef;
+			msg->FindRef("refs", &srcRef);
+			settingsView->restoreSettingsRef(srcRef);
+			break; }
+		case RESTORES_FILENAME: {
+			BString filenameString;
+			status_t result = msg->FindString("filename", &filenameString);
+			bool restoreResult = false;
+			if(result == B_OK)
+			{
+				restoreResult = _RestoreSettingsFromFilename(filenameString.String());
+			}
+			if(!restoreResult)
+			{
+				BString errorText("Saved settings file \"");
+				errorText.Append(filenameString).Append("\" does not exist.  Settings have not been changed.");
+				(new BAlert("", errorText.String(), "OK", NULL, NULL,
+							B_WIDTH_AS_USUAL, B_WARNING_ALERT))->Go(NULL);
+			}
 			break; }
 		case SET_PROFILE_DIR: {
 			msg->FindRef("refs", &fProfilesDirRef);
@@ -633,7 +670,7 @@ void SBWindow::MessageReceived(BMessage* msg)
 			break; }*/
 		case TEST_ZIP: {
 			BMessage *testmsg = new BMessage(TEST_ZIP_REF);
-			showFilePanel(openFilePanel, testmsg);
+			_showFilePanel(openFilePanel, testmsg);
 			delete testmsg;
 			break; }
 		case ZIP_SPLIT: {
@@ -644,7 +681,7 @@ void SBWindow::MessageReceived(BMessage* msg)
 				break;
 			}
 			BMessage *zsmsg = new BMessage(ZIP_SPLIT_REF);
-			showFilePanel(openFilePanel, zsmsg);
+			_showFilePanel(openFilePanel, zsmsg);
 			delete zsmsg;
 			break; }
 		default:
@@ -653,4 +690,34 @@ void SBWindow::MessageReceived(BMessage* msg)
 			break;
 	}
 	return;
+}
+
+
+bool
+SBWindow::_RestoreSettingsFromFilename(const char *filename)
+{
+	bool foundSettingsFile = false;
+	bool restoreResult = false;
+	BEntry fileEntry(filename);
+	//Check if filename is a valid path to a file
+	if(fileEntry.Exists() && fileEntry.IsFile())
+	{
+		foundSettingsFile = true;
+	}
+	//Check if filename is a saved profile
+	else
+	{
+		BPath filePath(&fProfilesDirRef);
+		filePath.Append(filename);
+		fileEntry.SetTo(filePath.Path());
+		if(fileEntry.Exists() && fileEntry.IsFile())
+			foundSettingsFile = true;
+	}
+	if(foundSettingsFile)
+	{
+		entry_ref fileRef;
+		fileEntry.GetRef(&fileRef);
+		restoreResult = settingsView->restoreSettingsRef(fileRef);
+	}
+	return restoreResult;
 }

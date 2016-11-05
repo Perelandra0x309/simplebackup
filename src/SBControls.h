@@ -17,8 +17,8 @@ class SBControls : public BView
 					SBControls(BRect&,/* BPicture* = NULL, BPicture* = NULL,*/ SBSettings* = NULL);
 					~SBControls();
 //	virtual void	FrameResized(float,float);
-	char*			getSrc() { return (char*)backupSrc->Text(); }
-	void			setSrc(char* src) { backupSrc->SetText(src); return; }
+	const char*		getSrc() { return backupSrc->Text(); }
+	void			setSrc(const char* src) { backupSrc->SetText(src); return; }
 //	void			setToggleB(bool a) { togglePB->SetValue(a); }
 //	float			getBottom() { return aboutB->Frame().bottom; }
 private:

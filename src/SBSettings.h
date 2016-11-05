@@ -54,7 +54,7 @@ class SBSettings : public BView
 	bool			getIncludeEntrys(BPath&);
 	int				getZipSplitBytes();
 	void			storeSettings(BMessage&);
-	bool			restoreSettingsRef(BMessage*);
+	bool			restoreSettingsRef(entry_ref srcRef);
 	void			restoreSettings(BMessage&);
 	SBControls		*parent;
 private:

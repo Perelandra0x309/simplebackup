@@ -27,8 +27,9 @@ private:
 	entry_ref		fProfilesDirRef;
 //	bool			settingsShown;
 //	void			toggleSettings();
-	void			showFilePanel(BFilePanel*,BMessage*);
-	void			saveBackup(BPath&, bool);
+	void			_showFilePanel(BFilePanel*,BMessage*);
+	void			_saveBackup(BPath&, bool);
+	bool			_RestoreSettingsFromFilename(const char *filename);
 };
 
 #endif

@@ -1,5 +1,7 @@
 SimpleBackup v 2.0.1
 by Brian Hill
+https://perelandra0x309.github.io/simplebackup
+
 
 What it is-
 
@@ -13,13 +15,9 @@ This application was started in early September 1999 for the purpose of creating
 
 Installation-
 
-If your reading this, then you've already successfully unzipped the SimpleBackup 2.0 installation package.  There are two steps to the install:
+Install from the HaikuDept application or download from the SimpleBackup website.
 
--First, move the 'SimpleBackup' folder to /boot/apps (you can use the included link named 'Step 1- Drag the 'SimpleBackup' folder here')
-
--Second, run the script named 'Step 2- Run this install script'.
-
-SimpleBackup is now ready to run.  The only external file required is the /bin/zip command, which is included with Haiku.  I have also included a sample settings file called "home_backup_settings" which will back up your /boot/home directory recursively except for the Mozilla and Opera cache folders. This file is located in /boot/home/config/settings/SimpleBackup (the default settings folder) but you can move the file anywhere else you want to keep it.
+SimpleBackup is now ready to run.  The only external file required is the /bin/zip command, which is included with Haiku.  I have also included a sample settings file called "home_backup_settings" which will back up your /boot/home directory recursively except for the Mozilla, Opera and QupZilla cache folders. This file is located in "/boot/home/config/settings/SimpleBackup/saved profiles" (the default saved settings profiles folder) but you can move the file anywhere else you want to keep it.
 
 
 How to use this application-
@@ -37,13 +35,13 @@ where the settings_file is a previously saved file containing settings for Simpl
 
 "SimpleBackup&" will simply open SimpleBackup and recall the settings from the last session.
 
-"SimpleBackup settings_file" will run SimpleBackup (if it is not already running) and restore the settings to those saved in settings_file.  If settings_file is just a file name (not a full path), SimpleBackup will look in both /boot/home and /boot/home/config/settings/SimpleBackup for the file.  To restore a file in another directory, specify the entire path.
+"SimpleBackup settings_file" will run SimpleBackup (if it is not already running) and restore the settings to those saved in settings_file.  If settings_file is just a file name (not a full path), SimpleBackup will look in the saved profiles folder you set (default folder is /boot/home/config/settings/SimpleBackup/saved profiles) for the file.  To restore a file in another directory, specify the entire path.
 
 "SimpleBackup settings_file backup_file" will automatically start zipping files according to the restored settings of settings_file and save the backup into backup_file.  If the backup_file does not exist, a new backup will be created.  If backup_file does exists, that file is updated.
 
 "SimpleBackup -q" or "SimpleBackup --quit" will quit the application.
 
-You can use the command line options to set up automatic backup of data with a script or a task scheduler.  For example, you can put "SimpleBackup home_backup_settings /boot/backups/home$(date +%m%d%y).zip"  into a scheduler to do automatic backups with the settings saved in the file /boot/home/config/settings/SimpleBackup/home_backup_settings and which saves the backup into the backup directory /boot/backups/.  The $(date +%m%d%y) part of the backup file name inserts the current date into the file name.
+You can use the command line options to set up automatic backup of data with a script or a task scheduler.  For example, you can put "SimpleBackup home_backup_settings /boot/backups/home$(date +%Y-%m-%d).zip" into a scheduler to do automatic backups with the settings saved in the file "/boot/home/config/settings/SimpleBackup/saved profiles/home_backup_settings" and which saves the backup into the backup directory /boot/backups/.  The $(date +%Y-%m-%d) part of the backup file name inserts the current date into the file name.
 If you want SimpleBackup to quit after starting the backup, put the command "SimpleBackup -q" as your last command.  Each time you call SimpleBackup to start saving a backup, that process is started in a completely different thread so you can quit SimpleBackup as soon as it is finished initializing all your backups.
 
 
@@ -73,7 +71,7 @@ Delete files after compressing:
 	Deletes the files that you are compressing after they have been sucessfully compressed.  The backup is checked for integrity after compressing and before any of the files are deleted.  If the integrity check fails, none of the files are deleted.
 
 Don't add files modified before:
-	If files have a modification date before the one specified they will not be added to the backup.  The date in in the form of Month/Day/Year
+	If files have a modification date before the one specified they will not be added to the backup.  The date is in the form of Month/Day/Year
 
 Don't add files modified after:
 	If files have a modification date after the one specified they will not be added to the backup.
@@ -116,12 +114,6 @@ Zip File Integrity Test:
 Split A Zip File:
 	This function will split zip files into multiple files with each file a maximum size defined in bytes, kilobytes, or megabytes.  If you choose to use zipsplit, each file is a complete zip archive, so the sections don't need to be recombined to extract the files.  Using standard split, the file is split into exactly the amount you specify.  You will need to recombine the split files using the cat command to get the original file back.  You can use decimal numbers for the size, such as 1.5 MegaBytes.
 
-UUencode file:
-	Encodes the specified file into the uue format.
-
-UUdecode file:
-	Decodes a uue file into the original file.
-
 
 Settings Buttons-
 
@@ -129,7 +121,7 @@ Defaults:
 	Returns all settings to the default settings.
 
 Restore Settings...:
-	Restore settings from a previously saved archived settings file.  if you press the "Set As Settings Directory" button in the open file dialog window, the current folder will be set as your default folder to look for settings files.
+	Restore settings from a previously saved archived settings file.  Under the "Settings Folder" menu you can set the folder where you save all your settings by clicking on "Set this folder as the settings folder".
 
 Save Settings...:
 	Save settings into an archived settings file, which can be restored later.  Useful for saving configurations for specific backups.
@@ -140,7 +132,7 @@ About:
 
 Suggestions, bugs, etc-
 
-This is by no means a finshed product.  See the ToDo section of this document for a list of features I hope to add.  If you have any suggestions or bugs to report, please visit this application's webpage on the http://www.haikuware.com website and send me a message.  New versions of this application will appear at www.haikuware.com.
+This is by no means a finshed product.  See the ToDo section of this document for a list of features I hope to add.  If you have any suggestions or bugs to report, please visit this application's project webpage at https://github.com/Perelandra0x309/simplebackup and submit a new issue.  New versions of this application will appear at the project webpage.
 
 
 Thanks (BeOS versions)-
@@ -163,7 +155,9 @@ Changes
 
 Version 2.0.1
 -Some GUI changes to fix layout issues in Haiku nightly image
--New using package management to create hpgk installer
+-Now using package management to create hpgk installer
+-Choose your saved settings folder
+-Removed UUE utilities
 
 Version 2.0 (12/01/2009)
 -Now buildling for Haiku!
